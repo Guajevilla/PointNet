@@ -1,11 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.utils.data
-import numpy as np
 import torch.nn.functional as F
 from torch.autograd import Variable
-from pointnet_util import PointNetSetAbstraction, PointNetSetAbstractionMsg
+from pointnet_util import PointNetSetAbstractionMsg,PointNetSetAbstraction,PointNetFeaturePropagation
 # npoint, radius_list, nsample_list, in_channel, mlp_list
 
 

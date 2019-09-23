@@ -5,9 +5,10 @@ import os.path
 import torch
 import numpy as np
 import sys
-from tqdm import tqdm 
+from tqdm import tqdm
 import json
 from plyfile import PlyData, PlyElement
+
 
 def get_segmentation_classes(root):
     catfile = os.path.join(root, 'synsetoffset2category.txt')
@@ -43,6 +44,7 @@ def get_segmentation_classes(root):
             print("category {} num segmentation classes {}".format(item, num_seg_classes))
             f.write("{}\t{}\n".format(item, num_seg_classes))
 
+
 def gen_modelnet_id(root):
     classes = []
     with open(os.path.join(root, 'train.txt'), 'r') as f:
@@ -52,6 +54,7 @@ def gen_modelnet_id(root):
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../misc/modelnet_id.txt'), 'w') as f:
         for i in range(len(classes)):
             f.write('{}\t{}\n'.format(classes[i], i))
+
 
 class ShapeNetDataset(data.Dataset):
     def __init__(self,
@@ -63,13 +66,13 @@ class ShapeNetDataset(data.Dataset):
                  data_augmentation=True):
         self.npoints = npoints
         self.root = root
-        self.catfile = os.path.join(self.root, 'synsetoffset2category.txt')
+        self.catfile = os.path.join(self.root, 'synsetoffset2category.txt')     # 存标签和文件夹关系
         self.cat = {}
         self.data_augmentation = data_augmentation
         self.classification = classification
         self.seg_classes = {}
         
-        with open(self.catfile, 'r') as f:
+        with open(self.catfile, 'r') as f:      # 只读
             for line in f:
                 ls = line.strip().split()
                 self.cat[ls[0]] = ls[1]
@@ -140,6 +143,7 @@ class ShapeNetDataset(data.Dataset):
     def __len__(self):
         return len(self.datapath)
 
+
 class ModelNetDataset(data.Dataset):
     def __init__(self,
                  root,
@@ -187,21 +191,21 @@ class ModelNetDataset(data.Dataset):
         cls = torch.from_numpy(np.array([cls]).astype(np.int64))
         return point_set, cls
 
-
     def __len__(self):
         return len(self.fns)
+
 
 if __name__ == '__main__':
     dataset = sys.argv[1]
     datapath = sys.argv[2]
 
     if dataset == 'shapenet':
-        d = ShapeNetDataset(root = datapath, class_choice = ['Chair'])
+        d = ShapeNetDataset(root=datapath, class_choice=['Chair'])
         print(len(d))
         ps, seg = d[0]
         print(ps.size(), ps.type(), seg.size(),seg.type())
 
-        d = ShapeNetDataset(root = datapath, classification = True)
+        d = ShapeNetDataset(root=datapath, classification=True)
         print(len(d))
         ps, cls = d[0]
         print(ps.size(), ps.type(), cls.size(),cls.type())
@@ -212,4 +216,3 @@ if __name__ == '__main__':
         d = ModelNetDataset(root=datapath)
         print(len(d))
         print(d[0])
-

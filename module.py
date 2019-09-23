@@ -112,13 +112,13 @@ class PointNet(nn.Module):
     def forward(self, x):
         trans = self.stn3d(x)
         x = x.transpose(2, 1)       # 变成B*N*3以满足矩阵计算x*trans
-        x = torch.bmm(x, trans)     # 实现bath间的矩阵乘法，不改变batch维度,计算结果维度为B*N*3
+        x = torch.bmm(x, trans)     # 实现batch间的矩阵乘法，不改变batch维度,计算结果维度为B*N*3
         x = x.transpose(2, 1)
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
         trans_feat = self.stnkd(x)
         x = x.transpose(2, 1)       # 变成B*N*3以满足矩阵计算x*trans
-        x = torch.bmm(x, trans_feat)     # 实现bath间的矩阵乘法，不改变batch维度,计算结果维度为B*N*3
+        x = torch.bmm(x, trans_feat)     # 实现batch间的矩阵乘法，不改变batch维度,计算结果维度为B*N*3
         x = x.transpose(2, 1)
         x = F.relu(self.bn3(self.conv3(x)))
         x = F.relu(self.bn4(self.conv4(x)))
@@ -133,7 +133,6 @@ class PointNet(nn.Module):
 
 def feature_transform_regularizer(trans):
     d = trans.size()[1]
-    batchsize = trans.size()[0]
     I = torch.eye(d)[None, :, :]
     if trans.is_cuda:
         I = I.cuda()

@@ -3,7 +3,7 @@ def cosine_similarity(feature):
     Input:
         feature: source points, [B, N, C]
     Output:
-        dist: per-point square distance, [B, N, N]
+        dist: per-point cosine_similarity distance, [B, N, N]
     """
     B, N, C = feature.shape
     feat = torch.matmul(feature, feature.permute(0, 2, 1))  # [B, N, N]
